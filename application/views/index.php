@@ -121,6 +121,9 @@
 			var start_year;
 			var end_year;
 			var modaltable;
+			var myIndex = 0;
+			var timerCarousel;
+			var checkCarousel = 0;
 			
 			function cetak_td(i, j, tahun, temp_list)
 			{
@@ -331,7 +334,7 @@
 								   $(node).removeClass('dt-button')
 							},
 							action: function ( e, dt, node, config ) {
-								agenda_modal();
+								layar_modal();
 							}
 						}
 					],
@@ -348,8 +351,11 @@
 						{ "sWidth": "25%" } // 4th column width 
                     ],
 				});
-				
-				modaltable = $('#modaltable').DataTable({ 			
+			}
+
+			function layar_modaltabel()
+			{
+				modaltableagenda = $('#modaltableagenda').DataTable({ 			
 					"processing": true, //Feature control the processing indicator.
 					"serverSide": true, //Feature control DataTables' server-side processing mode.
 					"ordering": false,
@@ -371,6 +377,33 @@
 						{ "sWidth": "16%" }, // 2nd column width 
 						{ "sWidth": "null" }, // 3rd column width
 						{ "sWidth": "28%" } // 4th column width 
+                    ]
+				});
+				
+				modaltablestatuskepegawaian = $('#modaltablestatuskepegawaian').DataTable({ 			
+					"processing": true, //Feature control the processing indicator.
+					"serverSide": true, //Feature control DataTables' server-side processing mode.
+					"ordering": false,
+					"paging": false,
+					"bAutoWidth": false,
+					"lengthChange": false,
+					"searching": false,
+					"bInfo": false,
+					"dom": 'Blrtip',
+					"buttons": [],
+					
+					// Load data for the table's content from an Ajax source
+					"ajax": {
+						"url": "status_kepegawaian/data_list_modal",
+						"type": "POST",
+					},
+					"aoColumns": [
+						{ "sWidth": "2%", "className": "text-center" }, // 1st column width 
+						{ "sWidth": "null" }, // 3rd column width
+						{ "sWidth": "20%" }, // 4rd column width
+						{ "sWidth": "10%" }, // 5rd column width
+						{ "sWidth": "10%" }, // 6th column width 
+						{ "sWidth": "20%" } // 7th column width 
                     ]
 				});
 			}
@@ -452,25 +485,107 @@
 					}
 				});
 			}
-			
-			
-			function agenda_modaltabel()
-			{
-				modaltable.ajax.reload(null,false); //reload datatable ajax 
+	
+			function durasi(id,waktu) {
+				var myinterval = setInterval(function() {
+					var timespan = countdown(new Date(waktu).getTime(), new Date().getTime());
+					var div = document.getElementById('durasi'+id);
+					if(timespan.years>0){
+						div.innerHTML = timespan.years + " tahun";
+					} else if (timespan.months>0){
+						div.innerHTML = timespan.months + " bulan, " + timespan.days + " hari";
+					} else if (timespan.days>0){
+						div.innerHTML = timespan.days + " hari";
+					} else if (timespan.hours>0){
+						div.innerHTML = timespan.hours + " jam, " + timespan.minutes + " menit";
+					} else if (timespan.minutes>0){
+						div.innerHTML = timespan.minutes + " menit";
+					} else if (timespan.seconds>0){
+						div.innerHTML = timespan.seconds + " detik";
+					} 
+				}, 1000);
 			}
 			
-			function agenda_modal()
+			function cleardurasi() {
+				for(var i=0; i<10000; i++) {
+					window.clearInterval(i);
+				}
+				
+				if(checkCarousel==0) {
+					window.setTimeout(layar_carousel, 10000);
+				} else {
+					window.clearTimeout(timerCarousel);
+				}
+			}
+			
+			
+			function refresh_layartabel()
+			{
+				cleardurasi();
+				modaltableagenda.ajax.reload(null,false); //reload datatable ajax 
+				modaltablestatuskepegawaian.ajax.reload(null,false); //reload datatable ajax 
+				text_berjalan();
+			}
+			
+			function layar_modal()
 			{			  		
-				$('#agendaModal').modal('show'); // show bootstrap modal
-				$('.modal-title').text('Agenda Pustekbang'); // Set Title to Bootstrap modal title
-				agenda_modaltabel();
+				$('#layarModal').modal('show'); // show bootstrap modal
+				$('.modal-title').text('Informasi Pustekbang'); // Set Title to Bootstrap modal title
+				layar_carousel();
+				refresh_layartabel();
+				text_berjalan();
+				//layar_modaltabel();
 			}	
+			
+			function layar_carousel() {
+				var i;
+				var x = document.getElementsByClassName("mySlides");
+				for (i = 0; i < x.length; i++) {
+				   x[i].style.display = "none";  
+				}
+				myIndex++;
+				if (myIndex > x.length) {myIndex = 1}   
+				x[myIndex-1].style.display = "block";   
+				timerCarousel = window.setTimeout(layar_carousel, 10000); // Change image every 2 seconds
+			}
+			
+			function pause_layar_carousel() {
+				if(checkCarousel==0) {
+					window.clearTimeout(timerCarousel);
+					checkCarousel=1;
+					$('#btn_pause_carousel').html('<i class="fa fa-play"></i>');
+				} else {
+					window.setTimeout(layar_carousel, 10000);
+					checkCarousel=0;
+					$('#btn_pause_carousel').html('<i class="fa fa-pause"></i>');
+				}
+			}
+			
+			function text_berjalan() {
+				$.ajax({
+					url : "<?php echo site_url('status_kepegawaian/data_text_berjalan/')?>" ,
+					type: "POST",
+					dataType: "JSON",					
+					success: function(data)
+					{																		
+						var sel = $("#layarModal #modalTitle");
+						sel.empty(); 							
+							
+						sel.html('<marquee scrolldelay="150"><h3 class="modal-title text-center">'+data.text_berjalan+'</h3></marquee>');														  										
+					},
+					error: function (jqXHR, textStatus, errorThrown)
+					{
+						alert('Error get data from ajax');
+					}
+				});	
+			}
 
 			$(document).ready(function() {	
 				init_tahun_proyek();
 				load_berita();
 				agenda_calendar();
 				agenda_tabel();
+				layar_modaltabel();
 			});    
 				
 									
@@ -519,36 +634,64 @@
 		<!-- Modal END:DETAIL BERITA-->
 		
 		<!-- Modal -->
-		<div id="agendaModal" class="modal fade" role="dialog">
+		<div id="layarModal" class="modal fade" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<!-- Modal content-->
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h2 class="modal-title text-center" id="modalTitle">Modal Header</h2>
+						<div width="100%" id="modalTitle"><marquee scrolldelay="100"><h3 class="modal-title text-center">Modal Header</h3></marquee></div>
 					</div>
 					<div class="modal-body" id="modalBody">
-						<!-- Table Page -->
-						<div class="page-tables">
-							<!-- Table -->
-							<div class="table-responsive">
-								<table class="table-hover table-bordered" cellpadding="0" cellspacing="0" border="0" id="modaltable">
-									<thead style="background-color:#006699; color:#FFFFFF;">
-										<tr>
-										  <th style="width:10px"><b>No</b></th>
-										  <th><b>Tanggal</b></th>
-										  <th><b>Agenda</b></th>
-										  <th><b>Keterangan</b></th>
-										</tr>
-									</thead>													
-								</table>						
-								<div class="clearfix"></div>									
+						<div class="w3-content w3-section">
+							<div class="mySlides">
+								<!-- Table Page -->
+								<div class="page-tables">
+									<!-- Table -->
+									<div class="table-responsive">
+										<table class="table-hover table-bordered" cellpadding="0" cellspacing="0" border="0" id="modaltableagenda">
+											<thead style="background-color:#006699; color:#FFFFFF;">
+												<tr>
+												  <th style="width:10px"><b>No</b></th>
+												  <th><b>Tanggal</b></th>
+												  <th><b>Agenda Pustekbang</b></th>
+												  <th><b>Keterangan</b></th>
+												</tr>
+											</thead>													
+										</table>						
+										<div class="clearfix"></div>									
+									</div>
+								</div>
+								<!-- Table Page -->	
+							</div>
+							<div class="mySlides">
+								<!-- Table Page -->
+								<div class="page-tables">
+									<!-- Table -->
+									<div class="table-responsive">
+										<table class="table-hover table-bordered" cellpadding="0" cellspacing="0" border="0" id="modaltablestatuskepegawaian">
+											<thead style="background-color:#006699; color:#FFFFFF;">
+												<tr>
+												  <th style="width:10px"><b>No</b></th>
+												  <th><b>Nama</b></th>
+												  <th><b>Usulan</b></th>
+												  <th><b>Posisi</b></th>
+												  <th><b>Durasi</b></th>
+												  <th><b>Keterangan</b></th>
+												</tr>
+											</thead>													
+										</table>						
+										<div class="clearfix"></div>									
+									</div>
+								</div>
+								<!-- Table Page -->	
 							</div>
 						</div>
-						<!-- Table Page -->	
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" onClick="refresh_layartabel()" class="btn btn-sm btn-success"><i class="fa fa-refresh"></i></button>	
+						<button type="button" onClick="pause_layar_carousel()" class="btn btn-sm btn-primary" id="btn_pause_carousel"><i class="fa fa-pause"></i></button>	
+						<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>	
 					 </div>
 				</div>
 
@@ -567,23 +710,23 @@
 	.calendar .month-container {
 		height: 240px;
 	}
-	#agendaModal .modal-dialog {
+	#layarModal .modal-dialog {
 	  width: 100%;
 	  padding: 0;
 	  margin: 0;
 	}
-	#agendaModal .modal-content {
+	#layarModal .modal-content {
 	  border-radius: 0;
 	}
-	#agendaModal .modal-body {
+	#layarModal .modal-body {
 	  min-height: 850px;
 	}
-	#modaltable {
+	#layarModal{
 		font-family: Arial, Helvetica, sans-serif;
 		font-size: 13pt;
 		line-height: 20px;
 	}
-	#modaltable .label {
+	#layarModal tabel .label {
 		font-size: 8pt;
 		line-height: 20px;
 	}
@@ -591,7 +734,7 @@
 		position:relative;
 		float:right;
 	}
-	#modaltable .label#today,#modaltable .label#yesterday {
+	#modaltableagenda .label#today,#modaltableagenda .label#yesterday {
 		opacity: 0;
 		animation:myfirst 1s;
 		-moz-animation:myfirst 1s infinite; /* Firefox */
@@ -608,6 +751,6 @@
 		100% {opacity: 0;}
 	}
 	.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-		background-color: #F4FA58;
+		background-color: rgb(221, 221, 221);
 	}
 </style>

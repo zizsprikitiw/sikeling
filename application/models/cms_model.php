@@ -1061,5 +1061,13 @@ class cms_model extends CI_Model {
 		$query = $this->db->get();								
 		return $query->result();		
 	}
+	
+	function get_jenis_usulan()     
+	{
+		$this->db->select('*');
+		$this->db->from('status_kepegawaian_jenisusulan');
+		$query = $this->db->get();								
+		return $query->result();		
+	}
 	 
 }

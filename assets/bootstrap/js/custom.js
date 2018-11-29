@@ -332,6 +332,12 @@ $(function() {
     });
 });
 
+$(function() {
+    $('#datetimepicker').datetimepicker({
+      format: 'DD-MM-YYYY', useCurrent: true
+    });
+});
+
 /* On Off pllugin */  
   
 $(document).ready(function() {

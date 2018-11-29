@@ -337,10 +337,16 @@
 							<div class="form-group">
 							  <label class="col-lg-3 control-label" for="tgl_dokumen">Tanggal Laporan</label>
 							  <div class="col-lg-7">
-									<div id="datetimepicker1" class="input-append input-group dtpicker">
+									<!--<div id="datetimepicker1" class="input-append input-group dtpicker">
 										<input data-format="dd-MM-yyyy" type="text" class="form-control" readonly="true" id="tgl_dokumen" name="tgl_dokumen">
 										<span class="input-group-addon add-on">
 											<i data-time-icon="fa fa-times" data-date-icon="fa fa-calendar"></i>
+										</span>
+									</div>-->
+									<div class="input-group dtpicker" id="datetimepicker">
+										<input type="text" id="tgl_dokumen" name="tgl_dokumen" class="form-control" />
+										<span class="input-group-addon">
+											<span class="fa fa-calendar"></span>
 										</span>
 									</div>
 							  </div>

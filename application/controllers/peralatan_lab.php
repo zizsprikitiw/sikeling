@@ -6,8 +6,8 @@ class Peralatan_lab extends CI_Controller {
 	var $table_name = 'peralatan_lab';
 	var $table_name_view = 'v_peralatan_lab';
 	var $table_lab = 'posisi_lab';
-	var $document_root = 'DOCUMENT_ROOT_PROJECT';
-	var $document_url = 'DOCUMENT_URL_PROJECT';
+	var $document_root = 'DOCUMENT_ROOT_ALAT';
+	var $document_url = 'DOCUMENT_URL_ALAT';
 	var $folder_laporan;
 	
 	function __construct()
@@ -29,7 +29,7 @@ class Peralatan_lab extends CI_Controller {
 			redirect('login', 'refresh');			
 		}		
 		
-		$this->folder_laporan = base_url().'pustekbang_file_archive';
+		$this->folder_laporan = base_url().'pustekbang_file_archive/alat';
 	}
 	
 	public function index()
@@ -221,7 +221,6 @@ class Peralatan_lab extends CI_Controller {
 					'filename_server' => $new_file_name,
 					'tahun' => $this->input->post('tahun')
 					);
-						echo "baru"; //agung
 			}else{
 				//revisi
 				$additional_data = array(
@@ -236,7 +235,6 @@ class Peralatan_lab extends CI_Controller {
 					'tahun' => $this->input->post('tahun')
 					);
 			}
-			echo "revisi";
 									
 			//SIMPAN Peralatan Lab
 			$peralatan_id = $this->cms_model->save($additional_data, $this->table_name);		

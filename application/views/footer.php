@@ -66,6 +66,7 @@
 <script src="<?=base_url()?>assets/select2/js/select2.full.min.js"></script> <!-- jQuery Select2 -->
 <script src="<?=base_url()?>assets/bootstrap-calendar/js/bootstrap-year-calendar.min.js"></script> <!-- jQuery Bootstrap Calendar -->
 <script src="<?=base_url()?>assets/bootstrap-calendar/js/languages/bootstrap-year-calendar.id.js"></script> <!-- jQuery Bootstrap Calendar Language -->
+<script src="<?=base_url()?>assets/countdown/countdown.min.js"></script> <!-- jQuery Countdown -->
 
 
 	

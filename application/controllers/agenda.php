@@ -208,7 +208,7 @@ class Agenda extends CI_Controller {
 			$row[] = $date;		
 			$row[] = '<div style="color:'.$color.';"><b>'.$list_item->event_name.'</b></div>';
 			$row[] = $keterangan;			
-			$row[] = date_format(date_create($list_item->submit_date),"j M Y, \J\a\m G:i");			
+			$row[] = date_format(date_create($list_item->submit_date),"j M Y, \J\a\m G:i").'. <i>'.$list_item->pengirim.'</i>';			
 			$row[] = $status;		
 			$row[] = $aksi;		
 			$data[] = $row;
@@ -332,7 +332,7 @@ class Agenda extends CI_Controller {
 			}
 			
 			//add html for action
-			if($is_admin&&$list_item->first_date>$datenow){
+			if($is_admin&&$list_item->first_date>=$datenow){
 				//punya akses administrator
 				$aksi .= '<a class="btn btn-xs btn-warning" href="javascript:void()" title="Edit" onclick="data_edit('."'".$list_item->id_agenda."'".')"><i class="fa fa-pencil"></i></a>';
 			}else{
@@ -345,8 +345,8 @@ class Agenda extends CI_Controller {
 			$row[] = $date;		
 			$row[] = '<div style="color:'.$color.';"><b>'.$list_item->event_name.'</b></div>';
 			$row[] = $keterangan;			
-			$row[] = date_format(date_create($list_item->submit_date),"j M Y, \J\a\m G:i");			
-			$row[] = date_format(date_create($list_item->approve_date),"j M Y, \J\a\m G:i");			
+			$row[] = date_format(date_create($list_item->submit_date),"j M Y, \J\a\m G:i").'. <i>'.$list_item->pengirim.'</i>';				
+			$row[] = date_format(date_create($list_item->approve_date),"j M Y, \J\a\m G:i").'. <i>'.$list_item->user_approve.'</i>';					
 			$row[] = $aksi;		
 			$data[] = $row;
 		}
@@ -473,8 +473,8 @@ class Agenda extends CI_Controller {
 			$row[] = $date;		
 			$row[] = '<div style="color:'.$color.';"><b>'.$list_item->event_name.'</b></div>';
 			$row[] = $keterangan;			
-			$row[] = date_format(date_create($list_item->submit_date),"j M Y, \J\a\m G:i");			
-			$row[] = date_format(date_create($list_item->reject_date),"j M Y, \J\a\m G:i");	
+			$row[] = date_format(date_create($list_item->submit_date),"j M Y, \J\a\m G:i").'. <i>'.$list_item->pengirim.'</i>';			
+			$row[] = date_format(date_create($list_item->reject_date),"j M Y, \J\a\m G:i").'. <i>'.$list_item->user_reject.'</i>';	
 			$data[] = $row;
 		}
 

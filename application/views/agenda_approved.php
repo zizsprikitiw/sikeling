@@ -185,7 +185,6 @@
 		
 		// Load data for the table's content from an Ajax source
 		"ajax": {
-			"url": "agenda/data_list_approved",
 			"url": "<?php echo site_url('agenda/data_list_approved/')?>",
 			"type": "POST",
 			"data": function ( d ) {
